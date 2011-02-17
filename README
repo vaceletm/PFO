@@ -1,0 +1,9 @@
+References:
+
+# Interface definition:
+http://wiki.planetforge.org/index.php/RBAC_API
+https://fusionforge.org/scm/viewvc.php/trunk/src/common/include/RBAC.php?revision=11839&root=fusionforge&view=markup
+
+# Implementation in fusionforge:
+https://fusionforge.org/scm/viewvc.php/trunk/src/common/include/PFO-RBAC.interface.php?revision=10060&root=fusionforge&view=markup
+https://fusionforge.org/scm/viewvc.php/trunk/src/common/include/RBACEngine.class.php?root=fusionforge&view=markup
