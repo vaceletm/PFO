@@ -2,11 +2,11 @@
 /**
  * Propose evolution of PFO_RBAC engine
  *
- * 1. Define a PFO_RBAC_Ressource interface that design the item the
+ * 1. Define a PFO_RBAC_Resource interface that design the item the
  *    roles manage.
  *    It aims to replace the ($section, $reference, $action = NULL)
  *    parameters and give the possibility to modelize more complex
- *    ressources like Codendi field permissions that have no single
+ *    resources like Codendi field permissions that have no single
  *    $reference id (the field primary key is (tracker_id, field_id)).
  *
  * 2. Remove PFO_Role::hasGlobalPermission (useless with previous
@@ -28,7 +28,7 @@
  *
  */
 
-interface PFO_RBAC_Ressource_Interface {
+interface PFO_RBAC_Resource_Interface {
 
 }
 
@@ -51,15 +51,15 @@ interface PFO_Role_Interface {
 	public function hasUser($user) ;
 
 
-    public function hasPermission(PFO_RBAC_Ressource_Interface $ressource);
+    public function hasPermission(PFO_RBAC_Resource_Interface $resource);
 }
 
 interface PFO_RBACEngine {
 	public function getAvailableRoles();
-	public function isRessourceAllowed(PFO_RBAC_Ressource_Interface $ressource) ;
-	public function isRessourceAllowedForUser(PFO_RBAC_Ressource_Interface $ressource, User $user);
-	public function getRolesByRessource(PFO_RBAC_Ressource_Interface $ressource) ;
-	public function getUsersByRessource(PFO_RBAC_Ressource_Interface $ressource) ;
+	public function isResourceAllowed(PFO_RBAC_Resource_Interface $resource) ;
+	public function isResourceAllowedForUser(PFO_RBAC_Resource_Interface $resource, User $user);
+	public function getRolesByResource(PFO_RBAC_Resource_Interface $resource) ;
+	public function getUsersByResource(PFO_RBAC_Resource_Interface $resource) ;
 }
 
 
