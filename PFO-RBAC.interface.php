@@ -29,19 +29,57 @@ define ("PFO_ROLE_ANONYMOUS", 2) ;
 define ("PFO_ROLE_LOGGEDIN",  3) ;
 define ("PFO_ROLE_UNION",     4) ;
 
-// Interface for the RBAC engine
+/**
+ * Interface for the RBAC engine
+ * @author Roland Mas
+ *
+ * This interface is meant to be implemented with a singleton pattern. 
+ * Its methods use the session management to decide what roles are available within the current session (if any), 
+ * and to provide the answer to the question “Does the current client have the permission for this action?”. 
+ * Other interesting questions that this interface is meant to answer include “does another account have the permission for that action?” 
+ * and, more generically, “who is allowed that action?”. 
+ */
 interface PFO_RBACEngine {
 	public static function getInstance() ;
 	public function getAvailableRoles() ; // From session
+
+    /**
+     *
+     */
 	public function isActionAllowed($section, $reference, $action = NULL) ;
+
+    /**
+     *
+     */
 	public function isGlobalActionAllowed($section, $action = NULL) ;
+
+    /**
+     *
+     */
 	public function isActionAllowedForUser($user, $section, $reference, $action = NULL) ;
+
+    /**
+     *
+     */
 	public function isGlobalActionAllowedForUser($user, $section, $action = NULL) ;
+
+    /**
+     *
+     */
 	public function getRolesByAllowedAction($section, $reference, $action = NULL) ;
+
+    /**
+     *
+     */
 	public function getUsersByAllowedAction($section, $reference, $action = NULL) ;
 }
 
-// Interfaces for the capabilities
+
+/**
+ * General definition of capabilities
+ *
+ * This interface is not meant to be implemented directly.
+ */
 interface PFO_Role {
 	public function getName() ;
 	public function setName($name) ;
@@ -55,14 +93,14 @@ interface PFO_Role {
 	public function unlinkProject($project) ;
 
     /**
-     * Get list of users who has this Role
+     * Get list of users who have this Role
      *
      * @return array of User
      */
 	public function getUsers() ;
 
     /**
-     * Does the given user has this Role
+     * Does the given user have this Role
      *
      * @param User $user
      *
