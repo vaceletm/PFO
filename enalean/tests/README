@@ -1,0 +1,27 @@
+== Definitions ==
+
+* Capacity: a capacity is the ability to do something (read, admin,
+  write, ...). A capacity is generally associated to a Ressource
+  Example: read, write, admin, grant
+
+* Ressource: a concrete thing we want to interact with. The level of
+  interaction authorized is defined by the Capacity we have on the
+  given Ressource.
+  Example: project #123, site, doc item #33, §4 of wiki
+
+* Role: a role is:
+  * A collection of capacities for a set of ressource
+  * A list of users
+
+  Example: Developer is a role
+  Developer has
+  * [write] capacity on [svn of project #123])
+  * [write] capacity on [root folder of project #123]
+  John and Marcel are Developers:
+  * John can [write] [svn of project #123]
+  * Marcel can [write] [root folder of project #123]
+
+== Brainstorm ==
+* If we manage only roles at RBAC_Engine level it will be a major performance issue
+** Need to crawl all defined roles for a user, so need to get all roles (in all projects, what if I have 10 roles (groupes) in 50 projects).
+** Would be much more efficient just to test the user capacity in this case
