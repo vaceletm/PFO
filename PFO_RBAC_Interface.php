@@ -23,53 +23,118 @@
  * USA
  */
 
-// Constants to identify role classes
-define ("PFO_ROLE_EXPLICIT",  1) ;
-define ("PFO_ROLE_ANONYMOUS", 2) ;
-define ("PFO_ROLE_LOGGEDIN",  3) ;
-define ("PFO_ROLE_UNION",     4) ;
-
 /**
  * Interface for the RBAC engine
  * @author Roland Mas
  *
- * This interface is meant to be implemented with a singleton pattern. 
- * Its methods use the session management to decide what roles are available within the current session (if any), 
- * and to provide the answer to the question “Does the current client have the permission for this action?”. 
- * Other interesting questions that this interface is meant to answer include “does another account have the permission for that action?” 
- * and, more generically, “who is allowed that action?”. 
+ * Its methods use the session management to decide what roles are
+ * available within the current session (if any),
+ * and to provide the answer to the question “Does the current client
+ * have the permission for this action?”.
+ * Other interesting questions that this interface is meant to answer
+ * include “does another account have the permission for that action?”
+ * and, more generically, “who is allowed that action?”.
+ *
+ * In the following code, we have 3 main parameter to describe a
+ * permission:
+ * $section   describes the ressource. Eg. 'project_admin' or
+ *            'tracker_tech'
+ * $reference describes the identififer associated to $section (101)
+ * $action    optional argument that add extra possibility to $section
+ *
+ * <pre>
+ * // Test if current user is allowed to administrate project 101
+ * $engine = new PFO_RBACEngine();
+ * $engine->isActionAllowed('project_admin', 101);
+ *
+ * // Test is a given user is member of project 102
+ * // $user provided by Forge library
+ * $engine->isActionAllowedForUser($user, 'project_member', 102);
+ * </pre>
+ *
  */
 interface PFO_RBACEngine {
-	public static function getInstance() ;
-	public function getAvailableRoles() ; // From session
 
     /**
+     * Return the list of roles of the current session.
      *
+     * This list is made of the explicites roles (Developer, Tester,
+     * ...) and context dependent (VLAN, ...).
+     *
+     * @return Array of PFO_Role
+     */
+    public function getAvailableRoles();
+
+    /**
+     * Check permission according to current session.
+     *
+     * Be aware, some roles might not be static (role associated to LAN access).
+     *
+     * @param String $section
+     * @param String $reference
+     * @param String $action
+     *
+     * @return Boolean
      */
 	public function isActionAllowed($section, $reference, $action = NULL) ;
 
     /**
+     * Check permission at Forge level.
      *
+     * Applies to "site_news_approval", "site_admin", ...
+     *
+     * @param String $section
+     * @param String $action
+     *
+     * @return Boolean
      */
 	public function isGlobalActionAllowed($section, $action = NULL) ;
 
     /**
+     * Check permission according to user's explicits roles
      *
+     * This method doesn't take into account Roles that depend of user
+     * context.
+     *
+     * @param User   $user
+     * @param String $section
+     * @param String $reference
+     * @param String $action
+     *
+     * @return Boolean
      */
 	public function isActionAllowedForUser($user, $section, $reference, $action = NULL) ;
 
     /**
+     * Check global permissions according to user's explicits roles
      *
+     * @param User   $user
+     * @param String $section
+     * @param String $action
+     *
+     * @return Boolean
      */
 	public function isGlobalActionAllowedForUser($user, $section, $action = NULL) ;
 
     /**
+     * Return all roles able to perform "section" for "reference"
      *
+     * @param String $section
+     * @param String $reference
+     * @param String $action
+     *
+     * @return Array of PFO_Role
      */
 	public function getRolesByAllowedAction($section, $reference, $action = NULL) ;
 
     /**
+     * Return all users able to perform "section" for "reference"
      *
+     * @param String $section
+     * @param String $reference
+     * @param String $action
+     *
+     * @return Array of User
      */
 	public function getUsersByAllowedAction($section, $reference, $action = NULL) ;
 }
@@ -81,13 +146,30 @@ interface PFO_RBACEngine {
  * This interface is not meant to be implemented directly.
  */
 interface PFO_Role {
+
+    /**
+     * Role name (Developer, etc...)
+     */
 	public function getName() ;
 	public function setName($name) ;
 	public function getID() ;
 
+    /**
+     * The role can be referenced in another project
+     */
 	public function isPublic() ;
 	public function setPublic($flag) ;
+
+    /**
+     * Define if the role is associated to a project or global (return null)
+     *
+     * @return Project or null
+     */
 	public function getHomeProject() ;
+
+    /**
+     * List of projects that reference the role
+     */
 	public function getLinkedProjects() ;
 	public function linkProject($project) ;
 	public function unlinkProject($project) ;
@@ -121,6 +203,7 @@ interface PFO_Role {
 
     /**
      * Forge-wide permissions not linked to a specific tool, such as project approval
+     * news approval, site admin, stats (in fusionforge)
      *
      * @param String $section
      * @param String $action
@@ -129,30 +212,22 @@ interface PFO_Role {
      */
 	public function hasGlobalPermission($section, $action = NULL) ;
 
-	public function normalizeData() ;
-	public function getSettings() ;
-	public function getSettingsForProject($project) ;
-	public function setSettings($data) ;
 }
 
 interface PFO_RoleExplicit extends PFO_Role {
-	const roleclass = PFO_ROLE_EXPLICIT ;
 	public function addUsers($users) ;
 	public function removeUsers($users) ;
 }
 
 interface PFO_RoleUnion extends PFO_Role {
-	const roleclass = PFO_ROLE_UNION ;
 	public function addRole($role) ;
 	public function removeRole($role) ;
 }
 
 interface PFO_RoleAnonymous extends PFO_Role {
-	const roleclass = PFO_ROLE_ANONYMOUS ;
 }
 
 interface PFO_RoleLoggedin extends PFO_Role {
-	const roleclass = PFO_ROLE_LOGGEDIN ;
 }
 
 // Local Variables:
