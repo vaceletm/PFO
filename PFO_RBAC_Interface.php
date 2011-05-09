@@ -76,7 +76,7 @@ interface PFO_RBACEngine {
      *
      * @return Boolean
      */
-	public function isActionAllowed($section, $reference, $action = NULL) ;
+    public function isActionAllowed($section, $reference, $action = NULL) ;
 
     /**
      * Check permission at Forge level.
@@ -88,7 +88,7 @@ interface PFO_RBACEngine {
      *
      * @return Boolean
      */
-	public function isGlobalActionAllowed($section, $action = NULL) ;
+    public function isGlobalActionAllowed($section, $action = NULL) ;
 
     /**
      * Check permission according to user's explicits roles
@@ -103,7 +103,7 @@ interface PFO_RBACEngine {
      *
      * @return Boolean
      */
-	public function isActionAllowedForUser($user, $section, $reference, $action = NULL) ;
+    public function isActionAllowedForUser($user, $section, $reference, $action = NULL) ;
 
     /**
      * Check global permissions according to user's explicits roles
@@ -114,7 +114,7 @@ interface PFO_RBACEngine {
      *
      * @return Boolean
      */
-	public function isGlobalActionAllowedForUser($user, $section, $action = NULL) ;
+    public function isGlobalActionAllowedForUser($user, $section, $action = NULL) ;
 
     /**
      * Return all roles able to perform "section" for "reference"
@@ -125,7 +125,7 @@ interface PFO_RBACEngine {
      *
      * @return Array of PFO_Role
      */
-	public function getRolesByAllowedAction($section, $reference, $action = NULL) ;
+    public function getRolesByAllowedAction($section, $reference, $action = NULL) ;
 
     /**
      * Return all users able to perform "section" for "reference"
@@ -136,7 +136,7 @@ interface PFO_RBACEngine {
      *
      * @return Array of User
      */
-	public function getUsersByAllowedAction($section, $reference, $action = NULL) ;
+    public function getUsersByAllowedAction($section, $reference, $action = NULL) ;
 }
 
 
@@ -152,28 +152,28 @@ interface PFO_Role {
      *
      * @return String
      */
-	public function getName();
+    public function getName();
 
     /**
      * Set role name
      *
      * @param String $name Name
      */
-	public function setName($name) ;
+    public function setName($name) ;
 
     /**
      * Get role Id in database
      *
      * @return Integer
      */
-	public function getID();
+    public function getID();
 
     /**
      * Definie whether the Role can be used in another project or not.
      *
      * @param Boolean $flag
      */
-	public function setPublic($flag);
+    public function setPublic($flag);
 
 
     /**
@@ -183,7 +183,7 @@ interface PFO_Role {
      *
      * @return Boolean
      */
-	public function isPublic();
+    public function isPublic();
 
 
     /**
@@ -191,27 +191,27 @@ interface PFO_Role {
      *
      * @return Project or null
      */
-	public function getHomeProject();
+    public function getHomeProject();
 
     /**
      * List of projects that reference the role
      *
      * @return Array of Project
      */
-	public function getLinkedProjects();
+    public function getLinkedProjects();
 
     /**
      * Add a project in the list of project that can use this Role
      *
      * @param Project $project
      */
-	public function linkProject($project);
+    public function linkProject($project);
 
     /**
      * Remove the a project from the list of that can use this Role
      * @param Project $project
      */
-	public function unlinkProject($project);
+    public function unlinkProject($project);
 
 
     /**
@@ -219,7 +219,7 @@ interface PFO_Role {
      *
      * @return array of User
      */
-	public function getUsers() ;
+    public function getUsers() ;
 
     /**
      * Does the given user have this Role
@@ -228,7 +228,7 @@ interface PFO_Role {
      *
      * @return Boolean
      */
-	public function hasUser($user) ;
+    public function hasUser($user) ;
 
     /**
      * Can the given Role access the specified ressource
@@ -239,7 +239,7 @@ interface PFO_Role {
      *
      * @return Boolean
      */
-	public function hasPermission($section, $reference, $action = NULL) ;
+    public function hasPermission($section, $reference, $action = NULL) ;
 
     /**
      * Forge-wide permissions not linked to a specific tool, such as project approval
@@ -250,7 +250,7 @@ interface PFO_Role {
      *
      * @return Boolean
      */
-	public function hasGlobalPermission($section, $action = NULL) ;
+    public function hasGlobalPermission($section, $action = NULL) ;
 
 }
 
@@ -261,14 +261,14 @@ interface PFO_RoleExplicit extends PFO_Role {
      *
      * @param Array $user Array of User
      */
-	public function addUsers($users) ;
+    public function addUsers($users) ;
 
     /**
      * Add a list of users to a role
      *
      * @param Array $user Array of User
      */
-	public function removeUsers($users) ;
+    public function removeUsers($users) ;
 }
 
 interface PFO_RoleUnion extends PFO_Role {
@@ -278,14 +278,14 @@ interface PFO_RoleUnion extends PFO_Role {
      *
      * @param PFO_Role $role
      */
-	public function addRole($role) ;
+    public function addRole($role) ;
 
     /**
      * Remove the Role from the union
      *
      * @param PFO_Role $role
      */
-	public function removeRole($role) ;
+    public function removeRole($role) ;
 }
 
 interface PFO_RoleAnonymous extends PFO_Role {
