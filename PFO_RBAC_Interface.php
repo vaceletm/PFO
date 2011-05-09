@@ -149,30 +149,70 @@ interface PFO_Role {
 
     /**
      * Role name (Developer, etc...)
+     *
+     * @return String
      */
-	public function getName() ;
-	public function setName($name) ;
-	public function getID() ;
+	public function getName();
 
     /**
-     * The role can be referenced in another project
+     * Set role name
+     *
+     * @param String $name Name
      */
-	public function isPublic() ;
-	public function setPublic($flag) ;
+	public function setName($name) ;
+
+    /**
+     * Get role Id in database
+     *
+     * @return Integer
+     */
+	public function getID();
+
+    /**
+     * Definie whether the Role can be used in another project or not.
+     *
+     * @param Boolean $flag
+     */
+	public function setPublic($flag);
+
+
+    /**
+     * The role can be used in another project
+     *
+     * If "true" the Role can be referenced in any other project
+     *
+     * @return Boolean
+     */
+	public function isPublic();
+
 
     /**
      * Define if the role is associated to a project or global (return null)
      *
      * @return Project or null
      */
-	public function getHomeProject() ;
+	public function getHomeProject();
 
     /**
      * List of projects that reference the role
+     *
+     * @return Array of Project
      */
-	public function getLinkedProjects() ;
-	public function linkProject($project) ;
-	public function unlinkProject($project) ;
+	public function getLinkedProjects();
+
+    /**
+     * Add a project in the list of project that can use this Role
+     *
+     * @param Project $project
+     */
+	public function linkProject($project);
+
+    /**
+     * Remove the a project from the list of that can use this Role
+     * @param Project $project
+     */
+	public function unlinkProject($project);
+
 
     /**
      * Get list of users who have this Role
@@ -215,12 +255,36 @@ interface PFO_Role {
 }
 
 interface PFO_RoleExplicit extends PFO_Role {
+
+    /**
+     * Add a list of users to a role
+     *
+     * @param Array $user Array of User
+     */
 	public function addUsers($users) ;
+
+    /**
+     * Add a list of users to a role
+     *
+     * @param Array $user Array of User
+     */
 	public function removeUsers($users) ;
 }
 
 interface PFO_RoleUnion extends PFO_Role {
+
+    /**
+     * Add a Role to the union
+     *
+     * @param PFO_Role $role
+     */
 	public function addRole($role) ;
+
+    /**
+     * Remove the Role from the union
+     *
+     * @param PFO_Role $role
+     */
 	public function removeRole($role) ;
 }
 
