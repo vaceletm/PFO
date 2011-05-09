@@ -49,6 +49,24 @@ class RBAC_EngineTest extends UnitTestCase {
         $this->assertTrue($e->isActionAllowed('project_admin', 101));
     }
 
+    function testHasCurrentUserRoleToBeSiteAdmin() {
+        $role = new MockRoleExplicit($this);
+        $role->expectOnce('hasPermission');
+        $role->setReturnValue('hasPermission', true, array('site_admin', -1, null));
+
+        $user = new MockUser($this);
+        $user->setReturnValue('getId', 102);
+
+        $e = new RBAC_EngineTestVersion($this);
+        $e->addRoleForUser($user, $role);
+
+        $um = new MockUserManager($this);
+        $um->setReturnValue('getCurrentUser', $user);
+        $e->setReturnValue('_getUserManager', $um);
+
+        $this->assertTrue($e->isGlobalActionAllowed('site_admin'));
+    }
+
 
     /*    function testLoadAllUsersRoles() {
         $e = new RBAC_Engine();

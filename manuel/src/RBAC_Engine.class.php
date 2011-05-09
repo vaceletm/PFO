@@ -17,9 +17,20 @@ class RBAC_Engine {
         return array();
     }
 
+    /**
+     * Main function to test access to a ressource.
+     *
+     * Nota: as of today, it's just an alias to isActionAllowedForUser
+     * but might evolve if non explicit roles arise
+     */
     public function isActionAllowed($section, $reference, $action = null) {
         $user = $this->_getUserManager()->getCurrentUser();
         return $this->isActionAllowedForUser($user, $section, $reference, $action);
+    }
+
+    public function isGlobalActionAllowed($section, $action = null) {
+        $user = $this->_getUserManager()->getCurrentUser();
+        return $this->isActionAllowedForUser($user, $section, -1, $action);
     }
 
 	public function isActionAllowedForUser($user, $section, $reference, $action = null) {

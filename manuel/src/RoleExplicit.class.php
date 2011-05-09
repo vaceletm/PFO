@@ -16,11 +16,23 @@ class RoleExplicit {
      *
      * @return Boolean
      */
-	public function hasPermission($section, $reference, $action = NULL) {
+	public function hasPermission($section, $reference, $action = null) {
         if (isset($this->capabilities[$section][$reference])) {
             return $this->capabilities[$section][$reference];
         }
         return false;
     }
 
+    /**
+     * Forge-wide permissions not linked to a specific tool, such as project approval
+     * news approval, site admin, stats (in fusionforge)
+     *
+     * @param String $section
+     * @param String $action
+     *
+     * @return Boolean
+     */
+    public function hasGlobalPermission($section, $action = null) {
+
+    }
 }
