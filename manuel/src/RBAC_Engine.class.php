@@ -1,6 +1,6 @@
 <?php
 
-require_once 'common/user/User.class.php';
+require_once 'common/user/UserManager.class.php';
 require_once 'RoleExplicit.class.php';
 
 class RBAC_Engine {
@@ -17,6 +17,11 @@ class RBAC_Engine {
         return array();
     }
 
+    public function isActionAllowed($section, $reference, $action = null) {
+        $user = $this->_getUserManager()->getCurrentUser();
+        return $this->isActionAllowedForUser($user, $section, $reference, $action);
+    }
+
 	public function isActionAllowedForUser($user, $section, $reference, $action = null) {
         $roles = $this->getRolesForUser($user);
         foreach ($roles as $role) {
@@ -25,6 +30,10 @@ class RBAC_Engine {
             }
         }
         return false;
+    }
+
+    protected function _getUserManager() {
+
     }
 
 }

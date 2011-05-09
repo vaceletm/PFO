@@ -3,7 +3,9 @@
 require_once 'common/rbac/RBAC_Engine.class.php';
 
 Mock::generate('User');
+Mock::generate('UserManager');
 Mock::generate('RoleExplicit');
+Mock::generatePartial('RBAC_Engine', 'RBAC_EngineTestVersion', array('_getUserManager'));
 
 class RBAC_EngineTest extends UnitTestCase {
 
@@ -28,6 +30,25 @@ class RBAC_EngineTest extends UnitTestCase {
 
         $this->assertFalse($e->isActionAllowedForUser($user, 'project_admin', 101));
     }
+
+    function testHasCurrentUserRoleToBeAProjectAdminAccess() {
+        $role = new MockRoleExplicit($this);
+        $role->expectOnce('hasPermission');
+        $role->setReturnValue('hasPermission', true, array('project_admin', 101, null));
+
+        $user = new MockUser($this);
+        $user->setReturnValue('getId', 102);
+
+        $e = new RBAC_EngineTestVersion($this);
+        $e->addRoleForUser($user, $role);
+
+        $um = new MockUserManager($this);
+        $um->setReturnValue('getCurrentUser', $user);
+        $e->setReturnValue('_getUserManager', $um);
+
+        $this->assertTrue($e->isActionAllowed('project_admin', 101));
+    }
+
 
     /*    function testLoadAllUsersRoles() {
         $e = new RBAC_Engine();
