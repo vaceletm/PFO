@@ -1,7 +1,9 @@
 <?php
 
-require_once 'common/user/UserManager.class.php';
 require_once 'RoleExplicit.class.php';
+require_once 'RBACEngineDao.class.php';
+
+require_once 'common/user/UserManager.class.php';
 
 class RBAC_Engine {
     protected $userRoles = array();
@@ -11,10 +13,23 @@ class RBAC_Engine {
     }
 
     public function getRolesForUser($user) {
-        if (isset($this->userRoles[$user->getId()])) {
-            return $this->userRoles[$user->getId()];
+        if (!isset($this->userRoles[$user->getId()])) {
+            $this->userRoles[$user->getId()] = array();
+            $dao = $this->getDao();
+            $dar = $dao->searchDynamicGroupsForUser($user->getId());
+            foreach ($dar as $row) {
+                $role = new RoleExplicit();
+                $role->initFromDynamic($row);
+                $this->addRoleForUser($user, $role);
+            }
+            $dar = $dao->searchStaticGroupsForUser($user->getId());
+            foreach ($dar as $row) {
+                $role = new RoleExplicit();
+                $role->initFromStatic($row);
+                $this->addRoleForUser($user, $role);
+            }
         }
-        return array();
+        return $this->userRoles[$user->getId()];
     }
 
     /**
@@ -24,12 +39,12 @@ class RBAC_Engine {
      * but might evolve if non explicit roles arise
      */
     public function isActionAllowed($section, $reference, $action = null) {
-        $user = $this->_getUserManager()->getCurrentUser();
+        $user = $this->getUserManager()->getCurrentUser();
         return $this->isActionAllowedForUser($user, $section, $reference, $action);
     }
 
     public function isGlobalActionAllowed($section, $action = null) {
-        $user = $this->_getUserManager()->getCurrentUser();
+        $user = $this->getUserManager()->getCurrentUser();
         return $this->isActionAllowedForUser($user, $section, -1, $action);
     }
 
@@ -43,8 +58,10 @@ class RBAC_Engine {
         return false;
     }
 
-    protected function _getUserManager() {
+    protected function getUserManager() {
+    }
 
+    protected function getDao() {
     }
 
 }

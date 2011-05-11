@@ -5,7 +5,9 @@ require_once 'common/rbac/RBAC_Engine.class.php';
 Mock::generate('User');
 Mock::generate('UserManager');
 Mock::generate('RoleExplicit');
-Mock::generatePartial('RBAC_Engine', 'RBAC_EngineTestVersion', array('_getUserManager'));
+Mock::generatePartial('RBAC_Engine', 'RBAC_EngineTestVersion', array('getUserManager', 'getDao'));
+Mock::generate('RBACEngineDao');
+Mock::generate('DataAccessResult');
 
 class RBAC_EngineTest extends UnitTestCase {
 
@@ -23,8 +25,16 @@ class RBAC_EngineTest extends UnitTestCase {
         $this->assertTrue($e->isActionAllowedForUser($user, 'project_admin', 101));
     }
 
-    function testIsProjectAdministrationBlockedToNonProjectAdmins() {
-        $e = new RBAC_Engine();
+    function testIsProjectAdministrationBlockedForNonProjectAdmins() {
+        $e = new RBAC_EngineTestVersion($this);
+
+        // No db result
+        $dar = new MockDataAccessResult($this);
+        $dar->setReturnValue('valid', false);
+        $dao = new MockRBACEngineDao($this);
+        $dao->setReturnValue('searchDynamicGroupsForUser', $dar);
+        $dao->setReturnValue('searchStaticGroupsForUser', $dar);
+        $e->setReturnValue('getDao', $dao);
 
         $user = new MockUser($this);
 
@@ -44,7 +54,7 @@ class RBAC_EngineTest extends UnitTestCase {
 
         $um = new MockUserManager($this);
         $um->setReturnValue('getCurrentUser', $user);
-        $e->setReturnValue('_getUserManager', $um);
+        $e->setReturnValue('getUserManager', $um);
 
         $this->assertTrue($e->isActionAllowed('project_admin', 101));
     }
@@ -62,25 +72,35 @@ class RBAC_EngineTest extends UnitTestCase {
 
         $um = new MockUserManager($this);
         $um->setReturnValue('getCurrentUser', $user);
-        $e->setReturnValue('_getUserManager', $um);
+        $e->setReturnValue('getUserManager', $um);
 
         $this->assertTrue($e->isGlobalActionAllowed('site_admin'));
     }
 
+    function testLoadOnTheFlyRolesLoad() {
+        $e = new RBAC_EngineTestVersion($this);
 
-    /*    function testLoadAllUsersRoles() {
-        $e = new RBAC_Engine();
+        $dao = new MockRBACEngineDao($this);
 
-        $role = new MockRoleExplicit($this);
+        $dar = new MockDataAccessResult($this);
+        $dar->setReturnValueAt(0, 'valid', true);
+        $dar->setReturnValueAt(1, 'valid', false);
+        $dar->setReturnValue('current', array('id' => 2));
+        $dao->setReturnValue('searchDynamicGroupsForUser', $dar);
 
-        $dao = new MockRoleDao($this);
-        $dao->setReturnValue('searchRoleForUser', array(), array(102));
+        $dar = new MockDataAccessResult($this);
+        $dar->setReturnValueAt(0, 'valid', true);
+        $dar->setReturnValueAt(1, 'valid', false);
+        $dar->setReturnValue('current', array('id' => 105));
+        $dao->setReturnValue('searchStaticGroupsForUser', $dar);
+
+        $e->setReturnValue('getDao', $dao);
 
         $user = new MockUser($this);
+        $user->setReturnValue('getId', 102);
 
         $roles = $e->getRolesForUser($user);
-
-        $this->assertTrue($roles, array($role));
-        }*/
-
+        $this->assertEqual($roles[0]->getId(), 2);
+        $this->assertEqual($roles[1]->getId(), 105);
+    }
 }

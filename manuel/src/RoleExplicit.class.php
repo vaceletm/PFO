@@ -1,6 +1,9 @@
 <?php
 
 class RoleExplicit {
+    protected $id;
+    protected $name;
+
     protected $capabilities = array();
 
     function setCapability($section, $reference) {
@@ -34,5 +37,30 @@ class RoleExplicit {
      */
     public function hasGlobalPermission($section, $action = null) {
 
+    }
+
+    public function initFromDynamic($row) {
+        isset($row['id']) ? $this->setId($row['id']) : null;
+        isset($row['name']) ? $this->setName($row['name']) : null;
+    }
+
+    public function initFromStatic($row) {
+        isset($row['id']) ? $this->setId($row['id']) : null;
+        isset($row['name']) ? $this->setName($row['name']) : null;
+    }
+
+    public function getName() {
+        return $this->name;
+    }
+    public function setName($name) {
+        $this->name = $name;
+    }
+
+    public function getId() {
+        return $this->id;
+    }
+
+    public function setId($id) {
+        $this->id = $id;
     }
 }
